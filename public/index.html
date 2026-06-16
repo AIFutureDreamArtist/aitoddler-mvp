@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aitoddler • Steward Harness</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">Ai</div>
+        <div>
+          <strong>Aitoddler</strong>
+          <span id="stage">Starting</span>
+        </div>
+      </div>
+
+      <nav id="nav"></nav>
+
+      <div class="side-note">
+        <span>🛡️</span>
+        <p>Terminal actions are wrapped, logged, and blocked when risk is high.</p>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <div class="topbar">
+        <div>
+          <p class="eyebrow">Karpathy-style autoresearch harness</p>
+          <h1>Curiosity matured into care.</h1>
+        </div>
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          <span id="model">local</span>
+        </div>
+      </div>
+
+      <div id="view"></div>
+    </main>
+  </div>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>
