@@ -55,13 +55,14 @@ function pilotDirectorView() {
   const activeTasks = tasks.filter(t => !['completed','cancelled'].includes(t.status));
   const proposals = state.proposals || [];
   const pending = proposals.filter(p => p.status === 'pending');
-  const recent = state.messages.slice(-5).reverse();
+  const recent = state.messages.slice(-6).reverse();
+  const recentActions = state.actions ? state.actions.slice(0, 5) : [];
 
   const templates = [
     { label: "Portfolio", prompt: "Bouw een moderne portfolio website met dark mode, hero, projecten, skills en contact form" },
     { label: "SaaS Landing", prompt: "Bouw een professionele SaaS landingspagina met hero, features, pricing en CTA" },
-    { label: "Todo App", prompt: "Bouw een werkende todo app met lokale opslag, add/delete en dark mode" },
-    { label: "Dashboard", prompt: "Bouw een simpel admin dashboard met sidebar, stats en tabel" }
+    { label: "Todo App", prompt: "Bouw een werkende todo app met lokale opslag, voorbeeld data en dark mode" },
+    { label: "Dashboard", prompt: "Bouw een simpel admin dashboard met sidebar, stats en voorbeeld data" }
   ];
 
   return `
@@ -69,7 +70,7 @@ function pilotDirectorView() {
       <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem">
         <div>
           <h1 style="margin:0;font-size:2.5rem">PilotDirector</h1>
-          <p style="margin:0.3rem 0 0;color:var(--muted)">Geavanceerde scaffolding • Templates • Visuele diffs • Voice • Rollback</p>
+          <p style="margin:0.3rem 0 0;color:var(--muted)">Slimme scaffolding • Templates • Visuele diffs • Voice • Undo</p>
         </div>
         <div style="margin-left:auto">
           <div class="status-pill" style="background:#e6f4ed;border-color:#0b7a53">
@@ -91,21 +92,21 @@ function pilotDirectorView() {
       <div class="control-panel" style="margin-bottom:1.5rem;border:2px solid #0b7a53">
         <h2 style="margin-top:0;color:#0b7a53">🚀 Geavanceerde Project Scaffolding</h2>
         <div style="position:relative">
-          <textarea id="pilot-goal" placeholder="Bouw een minimale werkende demo app met package.json en meerdere componenten" style="min-height:100px;padding-right:55px"></textarea>
+          <textarea id="pilot-goal" placeholder="Bouw een minimale maar écht functionele demo met voorbeeld data" style="min-height:100px;padding-right:55px"></textarea>
           <button id="voice-btn" style="position:absolute;top:12px;right:12px;background:#f4f7f1;border:1px solid #d9e2d6;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:1.1rem">🎤</button>
         </div>
 
         <div class="segmented" id="pilot-focus" style="margin:0.8rem 0">
-          <button class="selected" data-focus="ui">UI + Slimme Scaffolding</button>
+          <button class="selected" data-focus="ui">UI + Functionele Demo</button>
           <button data-focus="code">Full Code Project</button>
           <button data-focus="research">Research Project</button>
         </div>
 
         <button id="pilot-launch" class="primary" style="width:100%;padding:1rem;font-size:1.1rem;background:#0b7a53">
-          Launch Slimme Werkende Demo Scaffolding
+          Launch Minimale Werkende Demo
         </button>
         <div style="margin-top:0.5rem;font-size:0.8rem;color:var(--muted);text-align:center">
-          Genereert automatisch een minimale werkende demo (package.json + componenten)
+          Genereert automatisch een minimale maar écht functionele demo met voorbeeld data
         </div>
       </div>
 
@@ -116,7 +117,7 @@ function pilotDirectorView() {
         </div>
 
         <div class="wide-panel">
-          <div class="section-title"><h2>Approval Queue (Visuele Diff + Rollback)</h2><span>${pending.length}</span></div>
+          <div class="section-title"><h2>Approval Queue (Visuele Diff)</h2><span>${pending.length}</span></div>
           ${pending.length ? pending.map(p => {
             const diffHtml = (p.diff || '').split('\n').map(line => {
               if (line.startsWith('+')) return `<div style="color:#0b7a53;background:#e6f4ed">${escapeHtml(line)}</div>`;
@@ -134,6 +135,20 @@ function pilotDirectorView() {
               </div>`;
           }).join('') : '<div class="empty">Geen openstaande wijzigingen</div>'}
         </div>
+      </div>
+
+      <!-- Visual Undo History -->
+      <div class="wide-panel" style="margin-bottom:1.5rem">
+        <div class="section-title"><h2>Undo Geschiedenis (Recente Acties)</h2><span>${recentActions.length}</span></div>
+        ${recentActions.length ? recentActions.map(a => `
+          <div class="row" style="padding:0.7rem 1rem;align-items:center">
+            <div style="flex:1">
+              <strong>${escapeHtml(a.toolName || 'Action')}</strong>
+              <div style="font-size:0.8rem;color:var(--muted);margin-top:0.2rem">${escapeHtml(a.policy || '')}</div>
+            </div>
+            <button data-undo-action="${a.id}" style="background:#f4f7f1;border:1px solid #d9e2d6;padding:0.4rem 0.9rem;border-radius:6px;font-size:0.85rem">Undo</button>
+          </div>
+        `).join('') : '<div class="empty">Geen recente acties om ongedaan te maken</div>'}
       </div>
 
       <div class="wide-panel">
@@ -171,20 +186,20 @@ function bindViewEvents() {
       if (!goal) return alert("Geef een doel");
       const focus = document.querySelector("#pilot-focus .selected")?.dataset.focus || "ui";
 
-      pilotBtn.textContent = "Genereert minimale werkende demo...";
+      pilotBtn.textContent = "Genereert minimale functionele demo...";
       pilotBtn.disabled = true;
 
       await fetch("/api/tasks/create", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({goal, focus}) });
 
       await fetch("/api/chat", {
         method:"POST", headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ message: `PilotDirector, voer GEAVANCEERDE multi-file scaffolding uit voor: ${goal}. Genereer een MINIMALE WERKENDE DEMO met package.json, meerdere componenten en een functionele structuur die direct kan draaien. Maak proposals voor alle bestanden.` })
+        body: JSON.stringify({ message: `PilotDirector, voer GEAVANCEERDE multi-file scaffolding uit voor: ${goal}. Genereer een MINIMALE maar ÉCHT FUNCTIONELE demo met package.json, meerdere componenten, voorbeeld data en een structuur die direct werkt. Maak proposals voor alle bestanden.` })
       });
 
-      await fetch("/api/experiments/run", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ hypothesis: `Minimal working demo scaffolding: ${goal}`, focus:"stewardship" }) });
+      await fetch("/api/experiments/run", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ hypothesis: `Minimal functional working demo with example data: ${goal}`, focus:"stewardship" }) });
 
       await refresh();
-      pilotBtn.textContent = "Launch Geavanceerde Scaffolding";
+      pilotBtn.textContent = "Launch Slimme Werkende Demo";
       pilotBtn.disabled = false;
     });
   }
@@ -201,6 +216,15 @@ function bindViewEvents() {
     btn.addEventListener("click", async () => {
       btn.textContent = "Rolling back...";
       await fetch("/api/chat", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ message: `Maak een rollback proposal voor de vorige write.` }) });
+      await refresh();
+    });
+  });
+
+  // Simple undo from action history
+  document.querySelectorAll("[data-undo-action]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      btn.textContent = "Undoing...";
+      await fetch("/api/chat", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ message: `Maak een rollback proposal voor de vorige actie.` }) });
       await refresh();
     });
   });
