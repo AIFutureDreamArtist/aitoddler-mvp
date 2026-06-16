@@ -24,10 +24,7 @@ function setupVoiceInput() {
     const input = document.querySelector("#pilot-goal");
     if (input) input.value = input.value ? input.value + " " + transcript : transcript;
   };
-  recognition.onend = () => {
-    const btn = document.querySelector("#voice-btn");
-    if (btn) btn.textContent = "🎤";
-  };
+  recognition.onend = () => { const btn = document.querySelector("#voice-btn"); if (btn) btn.textContent = "🎤"; };
   return recognition;
 }
 
@@ -65,7 +62,7 @@ function pilotDirectorView() {
       <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem">
         <div>
           <h1 style="margin:0;font-size:2.5rem">PilotDirector</h1>
-          <p style="margin:0.3rem 0 0;color:var(--muted)">Geavanceerde scaffolding • Voice • Rollback</p>
+          <p style="margin:0.3rem 0 0;color:var(--muted)">Geavanceerde scaffolding • Visuele diffs • Voice</p>
         </div>
         <div style="margin-left:auto">
           <div class="status-pill" style="background:#e6f4ed;border-color:#0b7a53">
@@ -75,11 +72,11 @@ function pilotDirectorView() {
         </div>
       </div>
 
-      <!-- Advanced Scaffolding Launcher -->
+      <!-- Advanced Scaffolding -->
       <div class="control-panel" style="margin-bottom:1.5rem;border:2px solid #0b7a53">
         <h2 style="margin-top:0;color:#0b7a53">🚀 Geavanceerde Project Scaffolding</h2>
         <div style="position:relative">
-          <textarea id="pilot-goal" placeholder="Bouw een volledige moderne SaaS app met package.json, meerdere componenten, landing + dashboard" style="min-height:100px;padding-right:55px"></textarea>
+          <textarea id="pilot-goal" placeholder="Bouw een volledige moderne SaaS app met package.json, meerdere componenten en werkende structuur" style="min-height:100px;padding-right:55px"></textarea>
           <button id="voice-btn" style="position:absolute;top:12px;right:12px;background:#f4f7f1;border:1px solid #d9e2d6;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:1.1rem">🎤</button>
         </div>
 
@@ -89,32 +86,38 @@ function pilotDirectorView() {
           <button data-focus="research">Research Project</button>
         </div>
 
-        <button id="pilot-launch" class="primary" style="width:100%; padding:1rem; font-size:1.1rem; background:#0b7a53">
-          Launch Geavanceerde Scaffolding (package.json + componenten)
+        <button id="pilot-launch" class="primary" style="width:100%;padding:1rem;font-size:1.1rem;background:#0b7a53">
+          Launch Geavanceerde Scaffolding
         </button>
-        <div style="margin-top:0.5rem; font-size:0.8rem; color:var(--muted); text-align:center">
-          Genereert automatisch package.json + meerdere componenten + proposals
+        <div style="margin-top:0.5rem;font-size:0.8rem;color:var(--muted);text-align:center">
+          Genereert automatisch package.json + meerdere componenten + werkende structuur
         </div>
       </div>
 
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
         <div class="wide-panel">
           <div class="section-title"><h2>Actieve Agenten / Taken</h2><span>${activeTasks.length}</span></div>
           ${activeTasks.length ? activeTasks.map(t => `<div class="row" style="padding:0.9rem;border-left:5px solid #0b7a53"><strong>${escapeHtml(t.goal)}</strong><div style="font-size:0.8rem;color:var(--muted);margin-top:0.3rem">${t.focus} • ${t.status}</div></div>`).join('') : '<div class="empty">Geen actieve agents</div>'}
         </div>
 
         <div class="wide-panel">
-          <div class="section-title"><h2>Approval Queue + Rollback</h2><span>${pending.length}</span></div>
-          ${pending.length ? pending.map(p => `
-            <div style="padding:1rem;background:white;border:1px solid #d9e2d6;border-radius:8px;margin-bottom:0.8rem">
-              <div style="font-weight:700;margin-bottom:0.4rem">${escapeHtml(p.path)}</div>
-              <pre style="background:#f4f7f1;padding:0.7rem;border-radius:6px;font-size:0.75rem;max-height:100px;overflow:auto">${escapeHtml(p.diff || '')}</pre>
-              <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
-                <button data-approve="${p.id}" style="flex:1;background:#0b7a53;color:white;border:0;padding:0.5rem;border-radius:6px">Approve & Write</button>
-                <button data-rollback="${p.id}" style="background:#b94040;color:white;border:0;padding:0.5rem 1rem;border-radius:6px">Rollback</button>
-              </div>
-            </div>
-          `).join('') : '<div class="empty">Geen openstaande wijzigingen</div>'}
+          <div class="section-title"><h2>Approval Queue (Visuele Diff)</h2><span>${pending.length}</span></div>
+          ${pending.length ? pending.map(p => {
+            const diffHtml = (p.diff || '').split('\n').map(line => {
+              if (line.startsWith('+')) return `<div style="color:#0b7a53;background:#e6f4ed">${escapeHtml(line)}</div>`;
+              if (line.startsWith('-')) return `<div style="color:#b94040;background:#f9e3e3">${escapeHtml(line)}</div>`;
+              return `<div style="color:#555">${escapeHtml(line)}</div>`;
+            }).join('');
+            return `
+              <div style="padding:1rem;background:white;border:1px solid #d9e2d6;border-radius:8px;margin-bottom:0.8rem">
+                <div style="font-weight:700;margin-bottom:0.4rem">${escapeHtml(p.path)}</div>
+                <div style="background:#f8faf7;padding:0.6rem;border-radius:6px;font-family:monospace;font-size:0.75rem;max-height:140px;overflow:auto;line-height:1.4">${diffHtml}</div>
+                <div style="display:flex;gap:0.5rem;margin-top:0.6rem">
+                  <button data-approve="${p.id}" style="flex:1;background:#0b7a53;color:white;border:0;padding:0.5rem;border-radius:6px">Approve & Write</button>
+                  <button data-rollback="${p.id}" style="background:#b94040;color:white;border:0;padding:0.5rem 1rem;border-radius:6px">Rollback</button>
+                </div>
+              </div>`;
+          }).join('') : '<div class="empty">Geen openstaande wijzigingen</div>'}
         </div>
       </div>
 
@@ -127,7 +130,6 @@ function pilotDirectorView() {
 }
 
 function bindViewEvents() {
-  // Voice
   const voiceBtn = document.querySelector("#voice-btn");
   if (voiceBtn) {
     if (!recognition) recognition = setupVoiceInput();
@@ -138,7 +140,6 @@ function bindViewEvents() {
     });
   }
 
-  // Launch with advanced scaffolding prompt
   const pilotBtn = document.querySelector("#pilot-launch");
   if (pilotBtn) {
     pilotBtn.addEventListener("click", async () => {
@@ -146,17 +147,17 @@ function bindViewEvents() {
       if (!goal) return alert("Geef een doel");
       const focus = document.querySelector("#pilot-focus .selected")?.dataset.focus || "ui";
 
-      pilotBtn.textContent = "Genereert geavanceerd project...";
+      pilotBtn.textContent = "Genereert werkende app structuur...";
       pilotBtn.disabled = true;
 
       await fetch("/api/tasks/create", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({goal, focus}) });
 
       await fetch("/api/chat", {
         method:"POST", headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ message: `PilotDirector, voer GEAVANCEERDE multi-file scaffolding uit voor: ${goal}. Genereer automatisch een package.json + meerdere componenten/bestanden als proposals met diff. Maak een compleet, werkend project. Vraag approval voor elke write.` })
+        body: JSON.stringify({ message: `PilotDirector, voer GEAVANCEERDE multi-file scaffolding uit voor: ${goal}. Genereer een volledige werkende app structuur met package.json, meerdere componenten, en logische bestandsstructuur. Maak proposals voor alle bestanden met diff. Vraag approval.` })
       });
 
-      await fetch("/api/experiments/run", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ hypothesis: `Advanced multi-file scaffolding with package.json and components: ${goal}`, focus:"stewardship" }) });
+      await fetch("/api/experiments/run", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ hypothesis: `Advanced working app scaffolding with package.json and components: ${goal}`, focus:"stewardship" }) });
 
       await refresh();
       pilotBtn.textContent = "Launch Geavanceerde Scaffolding";
@@ -164,7 +165,6 @@ function bindViewEvents() {
     });
   }
 
-  // Approve + Rollback buttons
   document.querySelectorAll("[data-approve]").forEach(btn => {
     btn.addEventListener("click", async () => {
       btn.textContent = "Writing...";
@@ -175,17 +175,11 @@ function bindViewEvents() {
 
   document.querySelectorAll("[data-rollback]").forEach(btn => {
     btn.addEventListener("click", async () => {
-      const proposalId = btn.dataset.rollback;
       btn.textContent = "Rolling back...";
-      await fetch("/api/chat", {
-        method:"POST", headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ message: `Maak een rollback proposal voor de vorige write (proposal ${proposalId}). Stel de originele staat voor.` })
-      });
+      await fetch("/api/chat", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ message: `Maak een rollback proposal voor de vorige write.` }) });
       await refresh();
     });
   });
-
-  // Other handlers...
 }
 
 function escapeHtml(str) {
