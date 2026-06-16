@@ -1,21 +1,20 @@
-# PilotDirector
+# PilotDirector v0.3.0 — Advanced Local AI Agent Platform
 
-**PilotDirector** is your safe, local-first personal AI agent platform.
+**PilotDirector** is now a powerful, safe, local-first personal AI agent that combines:
 
-Combines the power of **Antigravity** (agent orchestration), **Lovable** (app building), and **Hermes** (self-evolving agent) — with strong **stewardship and human control** at its core.
+- **Antigravity** style agent orchestration & multi-tasking
+- **Lovable** style full project scaffolding
+- **Hermes** style self-evolving memory & skills
+- Strong **stewardship** with human approval gates
 
-## Status: Completed MVP (v0.2.0)
+## What's New in v0.3.0
 
-PilotDirector is now fully usable with:
-
-- Beautiful main **PilotDirector dashboard**
-- High-level goal input + 4 smart agent modes
-- Automatic task creation and tracking
-- Active Tasks overview
-- Integrated planning via experiments + safety scoring
-- New safe tools (`generate_component`, `create_project_plan`)
-- Full Memory, Skills, and Action history
-- Strong approval gates for risky actions
+- **Volledige Project Scaffolding**: Genereert meerdere bestanden tegelijk via proposals
+- **Betere Diff Rendering**: Duidelijke diff preview in de Approval Queue
+- **Echte Multi-Agent / Multi-Task**: Meerdere actieve taken tegelijk, elk als aparte agent
+- File tools: `read_file` + `propose_file_write` met approval flow
+- Approval Queue met één-klik goedkeuring
+- Verbeterde UI met Actieve Taken + Diffs
 
 ## Quick Start
 
@@ -26,18 +25,14 @@ git checkout jarvis-dashboard
 npm run dev
 ```
 
-Open http://127.0.0.1:8787 — PilotDirector tab is ready.
+Open http://127.0.0.1:8787 en ga naar de **PilotDirector** tab.
 
-## How it works
+## Voorbeeld: Volledig Project Scaffolding
 
-1. Enter a high-level goal in the PilotDirector tab
-2. Choose mode (UI, Code, Research, Automation)
-3. Launch
-4. PilotDirector plans safely, uses tools, creates tasks, and keeps you informed
-5. You stay in control via approval gates
+1. Typ: "Bouw een moderne portfolio website met dark mode, projecten, skills en contact form"
+2. Kies mode **UI + Scaffolding**
+3. Klik **Launch Full Project Scaffolding**
+4. PilotDirector genereert meerdere file proposals
+5. Jij keurt goed via de Approval Queue → bestanden worden geschreven
 
-Everything is local, logged, and reversible where possible.
-
-## Philosophy
-
-You are the pilot. PilotDirector is your capable co-pilot that never flies without your oversight.
+Alles blijft veilig, lokaal en omkeerbaar.
