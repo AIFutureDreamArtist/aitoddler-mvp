@@ -1,6 +1,6 @@
 const navItems = [
-  ["dashboard", "Dashboard"],
-  ["jarvis", "Jarvis Agent"],
+  ["pilot", "PilotDirector"],
+  ["dashboard", "Overview"],
   ["chat", "Chat"],
   ["experiments", "Experiments"],
   ["skills", "Skills"],
@@ -8,7 +8,7 @@ const navItems = [
   ["memory", "Memory"]
 ];
 
-let active = "jarvis";
+let active = "pilot";
 let state = null;
 
 const view = document.querySelector("#view");
@@ -39,8 +39,8 @@ function render() {
     button.classList.toggle("active", button.dataset.id === active);
   });
   const views = {
+    pilot: pilotDirectorView,
     dashboard: dashboardView,
-    jarvis: jarvisView,
     chat: chatView,
     experiments: experimentsView,
     skills: skillsView,
@@ -107,62 +107,88 @@ function scoreChart(items) {
   `;
 }
 
-// NEW: Jarvis Agent View
-function jarvisView() {
+// === PILOTDIRECTOR VIEW (Main Agent Interface) ===
+function pilotDirectorView() {
+  const recentTasks = state.messages.slice(-8).reverse();
+  
   return `
-    <section class="two-column">
-      <div class="control-panel">
-        <div class="section-title">
-          <h2>🤖 Jarvis — Jouw Persoonlijke Agent</h2>
-          <span class="badge neutral">Steward Mode</span>
+    <div>
+      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+        <div>
+          <h1 style="margin: 0; font-size: 2.2rem;">PilotDirector</h1>
+          <p style="margin: 0.3rem 0 0; color: var(--muted); font-size: 1.05rem;">
+            Jouw veilige persoonlijke AI agent • Antigravity × Lovable × Hermes stijl
+          </p>
         </div>
-        
-        <p style="color: var(--muted); margin-bottom: 1rem;">
-          Geef Jarvis een hoog-niveau doel. Hij plant de taak, kiest veilige tools, vraagt goedkeuring waar nodig en voert uit met volledige logging.
-        </p>
+        <div style="margin-left: auto; text-align: right;">
+          <div class="status-pill">
+            <span class="status-dot"></span>
+            <strong>Steward Active</strong>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem;">
+            ${state.summary.maturity} • ${state.summary.skills} skills
+          </div>
+        </div>
+      </div>
 
-        <textarea id="jarvis-goal" placeholder="Bijv: Bouw een mooie landingspagina voor mijn startup met hero, features en contact form. Of: Onderzoek de laatste trends in AI agents en maak een samenvatting met bronnen."></textarea>
-        
-        <div style="margin: 1rem 0;">
-          <label style="font-size: 0.85rem; color: var(--muted);">Focus / Stijl</label>
-          <div class="segmented" id="jarvis-focus">
-            <button class="selected" data-focus="general">Algemeen</button>
-            <button data-focus="code">Code / Cursor-style</button>
-            <button data-focus="ui">UI / Lovable-style</button>
-            <button data-focus="research">Research / Hermes-style</button>
-            <button data-focus="automation">Automation</button>
+      <!-- Goal Input -->
+      <div class="control-panel" style="margin-bottom: 1.5rem;">
+        <h2 style="margin-top: 0;">Geef een hoog-niveau doel</h2>
+        <textarea id="pilot-goal" placeholder="Voorbeeld: Bouw een moderne SaaS landingspagina met hero sectie, features, pricing tiers en contact form. Of: Onderzoek de laatste ontwikkelingen in multi-agent systemen en maak een gestructureerd rapport met aanbevelingen." style="min-height: 110px; font-size: 1rem;"></textarea>
+
+        <div style="margin: 1rem 0 0.5rem;">
+          <label style="font-size: 0.9rem; color: var(--muted); font-weight: 600;">Focus / Agent Mode</label>
+          <div class="segmented" id="pilot-focus" style="margin-top: 0.5rem;">
+            <button class="selected" data-focus="ui">UI / App Builder (Lovable)</button>
+            <button data-focus="code">Code & Refactor (Cursor/Antigravity)</button>
+            <button data-focus="research">Research & Analysis (Hermes)</button>
+            <button data-focus="automation">Automation & Tasks</button>
           </div>
         </div>
 
-        <button class="primary" id="jarvis-submit" style="width: 100%;">🚀 Laat Jarvis aan de slag gaan</button>
+        <button class="primary" id="pilot-launch" style="width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 0.8rem;">
+          🚀 Launch Pilot — Laat PilotDirector aan de slag gaan
+        </button>
 
-        <div style="margin-top: 1.5rem; font-size: 0.85rem; color: var(--muted);">
-          <strong>Veiligheid:</strong> Hoog-risico acties worden eerst voorgesteld en wachten op jouw goedkeuring. Alles wordt gelogd in Memory & Actions.
+        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--muted); display: flex; gap: 1.5rem; flex-wrap: wrap;">
+          <div>✓ Veilige planning via experiments</div>
+          <div>✓ Approval gates bij riskante acties</div>
+          <div>✓ Volledige logging & memory</div>
+          <div>✓ Skills worden automatisch gepromoot</div>
         </div>
       </div>
 
-      <div class="list-panel">
+      <!-- Live Task Overview -->
+      <div class="wide-panel">
         <div class="section-title">
-          <h2>Actieve & Recente Taken</h2>
-          <span id="task-count">${state.actions.length + state.experiments.length}</span>
+          <h2>Actieve & Recente Pilot Taken</h2>
+          <span>${recentTasks.length} recente interacties</span>
         </div>
         
-        <div id="jarvis-tasks">
-          ${state.messages.slice(-6).reverse().map(msg => `
-            <div class="row" style="padding: 0.8rem 0; border-top: 1px solid var(--line);">
-              <div>
-                <strong>${msg.role === 'user' ? 'Jij' : 'Jarvis'}</strong><br>
-                <span style="font-size: 0.9rem; color: var(--muted);">${escapeHtml(msg.content.substring(0, 140))}${msg.content.length > 140 ? '...' : ''}</span>
+        <div style="display: grid; gap: 0.75rem;">
+          ${recentTasks.length > 0 
+            ? recentTasks.map(msg => `
+              <div class="row" style="padding: 1rem; background: ${msg.role === 'user' ? 'rgba(22,24,21,0.03)' : 'white'};">
+                <div style="flex: 1;">
+                  <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.35rem;">
+                    <span style="font-weight: 700; color: ${msg.role === 'user' ? '#161815' : 'var(--accent)'};">
+                      ${msg.role === 'user' ? 'Jij' : 'PilotDirector'}
+                    </span>
+                    <span style="font-size: 0.75rem; color: var(--muted);">${new Date(msg.createdAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+                  </div>
+                  <p style="margin: 0; line-height: 1.5; color: #30362f;">${escapeHtml(msg.content)}</p>
+                </div>
               </div>
-            </div>
-          `).join('') || '<p style="color: var(--muted);">Nog geen taken. Geef Jarvis een doel hierboven.</p>'}
-        </div>
-
-        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); font-size: 0.8rem; color: var(--muted);">
-          Jarvis gebruikt het Aitoddler steward systeem: hij runt bounded experiments, promoot skills alleen als safety + agency verbeteren, en vraagt approval bij riskante acties.
+            `).join('')
+            : `<div class="empty" style="min-height: 120px;">Nog geen taken. Start hierboven met een doel.</div>`
+          }
         </div>
       </div>
-    </section>
+
+      <div style="margin-top: 1.5rem; font-size: 0.85rem; color: var(--muted); text-align: center;">
+        PilotDirector werkt altijd via het steward-systeem: hij plant veilig, vraagt goedkeuring waar nodig en leert van elke uitvoering.
+      </div>
+    </div>
   `;
 }
 
@@ -182,7 +208,7 @@ function chatView() {
           .join("")}
       </div>
       <form class="composer" id="chat-form">
-        <input id="chat-input" placeholder="Vraag Jarvis iets of geef een taak..." />
+        <input id="chat-input" placeholder="Vraag PilotDirector iets of geef een taak..." />
         <button>Send</button>
       </form>
     </section>
@@ -302,46 +328,57 @@ function memoryView() {
 }
 
 function bindViewEvents() {
-  // Jarvis submit handler
-  const jarvisBtn = document.querySelector("#jarvis-submit");
-  if (jarvisBtn) {
-    jarvisBtn.addEventListener("click", async () => {
-      const goal = document.querySelector("#jarvis-goal").value.trim();
-      if (!goal) return alert("Geef Jarvis een doel.");
+  // PilotDirector Launch
+  const pilotBtn = document.querySelector("#pilot-launch");
+  if (pilotBtn) {
+    pilotBtn.addEventListener("click", async () => {
+      const goal = document.querySelector("#pilot-goal").value.trim();
+      if (!goal) {
+        alert("Geef PilotDirector een duidelijk doel.");
+        return;
+      }
       
-      const focusBtn = document.querySelector("#jarvis-focus .selected");
-      const focus = focusBtn ? focusBtn.dataset.focus : "general";
+      const focusBtn = document.querySelector("#pilot-focus .selected");
+      const focus = focusBtn ? focusBtn.dataset.focus : "ui";
       
-      jarvisBtn.textContent = "Jarvis denkt na...";
-      jarvisBtn.disabled = true;
+      pilotBtn.textContent = "PilotDirector plant en werkt...";
+      pilotBtn.disabled = true;
 
-      // For now: send as chat + run an experiment as planning step
+      // Send goal to chat
       await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: `Jarvis, voer deze taak uit: ${goal}. Focus: ${focus}. Plan het stap voor stap met safety checks.` })
+        body: JSON.stringify({ 
+          message: `PilotDirector, voer dit doel uit: ${goal}. Gebruik focus: ${focus}. Plan stap-voor-stap, gebruik veilige tools en vraag goedkeuring waar nodig.` 
+        })
       });
 
-      // Also run a planning experiment
+      // Trigger a planning experiment
       await fetch("/api/experiments/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          hypothesis: `Plan and safely execute user goal: ${goal} (focus: ${focus})`, 
+          hypothesis: `High-level goal execution: ${goal} (mode: ${focus}) — safe, reversible, high value for user`, 
           focus: "stewardship" 
         })
       });
 
       await refresh();
-      jarvisBtn.textContent = "🚀 Laat Jarvis aan de slag gaan";
-      jarvisBtn.disabled = false;
+      pilotBtn.textContent = "🚀 Launch Pilot — Laat PilotDirector aan de slag gaan";
+      pilotBtn.disabled = false;
+
+      // Optional: scroll to recent tasks
+      setTimeout(() => {
+        const tasksSection = document.querySelector('.wide-panel');
+        if (tasksSection) tasksSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
     });
   }
 
-  // Segmented buttons for Jarvis focus
-  document.querySelectorAll("#jarvis-focus [data-focus]").forEach((button) => {
+  // Segmented focus buttons
+  document.querySelectorAll("#pilot-focus [data-focus]").forEach((button) => {
     button.addEventListener("click", () => {
-      document.querySelectorAll("#jarvis-focus [data-focus]").forEach((item) => item.classList.remove("selected"));
+      document.querySelectorAll("#pilot-focus [data-focus]").forEach((item) => item.classList.remove("selected"));
       button.classList.add("selected");
     });
   });
