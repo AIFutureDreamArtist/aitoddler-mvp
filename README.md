@@ -2,31 +2,20 @@
 
 **PilotDirector** is your safe, local-first personal AI agent platform.
 
-It combines the best of:
-- **Google Antigravity** — agent-first orchestration and parallel task thinking
-- **Lovable** — vibe coding and app/component generation
-- **Hermes / OpenClaw** — self-evolving personal agent with persistent memory & skills
+Combines the power of **Antigravity** (agent orchestration), **Lovable** (app building), and **Hermes** (self-evolving agent) — with strong **stewardship and human control** at its core.
 
-...but with **strong stewardship, human oversight, and reversibility** built in from day one.
+## Status: Completed MVP (v0.2.0)
 
-## Core Promise
+PilotDirector is now fully usable with:
 
-You give high-level goals → PilotDirector plans, breaks it down, executes safely through tools, and learns. 
-Everything stays local. Risky actions are always proposed first for your approval.
-
-## Current Status (v0.2.0 - jarvis-dashboard branch)
-
-**PilotDirector is ready to use.**
-
-### What works now:
-- Beautiful **PilotDirector tab** as main command center
-- High-level goal input with 4 focus modes (UI/App, Code, Research, Automation)
-- Automatic planning via the steward experiment system
-- New safe AI tools: `generate_component` and `create_project_plan`
-- Full Memory, Skills promotion, Action logging
-- Approval gates for any high-risk actions
-- Persistent tasks tracking (tasks.json)
-- Works completely locally (optional local LLM support)
+- Beautiful main **PilotDirector dashboard**
+- High-level goal input + 4 smart agent modes
+- Automatic task creation and tracking
+- Active Tasks overview
+- Integrated planning via experiments + safety scoring
+- New safe tools (`generate_component`, `create_project_plan`)
+- Full Memory, Skills, and Action history
+- Strong approval gates for risky actions
 
 ## Quick Start
 
@@ -37,48 +26,18 @@ git checkout jarvis-dashboard
 npm run dev
 ```
 
-Open **http://127.0.0.1:8787** — the **PilotDirector** tab is the main interface.
+Open http://127.0.0.1:8787 — PilotDirector tab is ready.
 
-## How to use
+## How it works
 
-1. Ga naar de **PilotDirector** tab
-2. Typ een hoog-niveau doel (bijv. "Bouw een moderne portfolio website met dark mode en contact form")
-3. Kies de juiste mode (UI, Code, Research of Automation)
-4. Klik **Launch Pilot**
-5. PilotDirector plant het, gebruikt tools, en houdt je op de hoogte via chat + logs
-6. Bij riskante acties krijg je een duidelijke approval prompt
+1. Enter a high-level goal in the PilotDirector tab
+2. Choose mode (UI, Code, Research, Automation)
+3. Launch
+4. PilotDirector plans safely, uses tools, creates tasks, and keeps you informed
+5. You stay in control via approval gates
 
-## Architecture & Safety
-
-```
-User Goal
-   ↓
-PilotDirector Planner (Chat + Scored Experiments)
-   ↓
-Task Decomposition
-   ↓
-Tool Selection (allowlist only)
-   ↓
-Safety Check + Human Approval Gate (if needed)
-   ↓
-Execute → Capture result
-   ↓
-Memory update + Skill promotion (if valuable & safe)
-   ↓
-Continuous improvement
-```
-
-PilotDirector never has raw access to your system. Everything goes through the proven steward layer.
-
-## Next logical improvements (easy to add)
-- Real background task queue + multi-agent
-- Safe file read/write with diff preview
-- Full project scaffolding
-- Proactive suggestions from memory
+Everything is local, logged, and reversible where possible.
 
 ## Philosophy
 
-PilotDirector is not just another AI tool.
-It is **your personal director** that helps you build, research and automate — while you stay firmly in the pilot seat.
-
-Local. Safe. Self-improving. Under your control.
+You are the pilot. PilotDirector is your capable co-pilot that never flies without your oversight.
