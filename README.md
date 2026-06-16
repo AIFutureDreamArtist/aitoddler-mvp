@@ -1,37 +1,102 @@
-# Aitoddler MVP → Jarvis Steward Platform
+# PilotDirector
 
-**Aitoddler** is evolving into your personal **Jarvis Steward** — a safe, local-first AI agent platform that runs in the background and helps you get things done like Cursor, Lovable, Copilot, research agents, and automation tools — but with strong stewardship, human oversight, and reversible actions.
+**PilotDirector** is your safe, local-first personal AI agent platform.
 
-## Core Philosophy (unchanged)
-- Bounded experiments
-- Safety + human agency first
-- Skills are promoted only when they improve both capability *and* stewardship
-- All terminal/OS actions go through policy + allowlist + logging
+It combines the best of:
+- **Google Antigravity** — agent-first orchestration, parallel tasks, browser-like execution
+- **Lovable** — vibe coding and full app/component generation
+- **Hermes / OpenClaw** — self-evolving personal agent with persistent memory and skills
 
-## New Jarvis Features (in development on `jarvis-dashboard` branch)
-- **Jarvis Dashboard**: Central command center
-- **Personal Agent**: Natural language → task decomposition → safe execution
-- **Background Platform**: Always-on server with task queue
-- **Multi-tool Agent**: Code editing (Cursor-like), UI building (Lovable-like), research, automation
-- **Approval Gates**: High-risk actions require your explicit approval
-- **Memory & Skills Inheritance**: Jarvis learns and reuses patterns safely
+...but with **strong stewardship, human oversight, and reversibility** at its core (inspired by Aitoddler principles).
 
-## Quick Start (same as before)
+## Core Promise
+
+You give high-level goals → PilotDirector plans, decomposes, executes safely, and learns.
+Everything runs locally. Risky actions are proposed first and require your explicit approval. Nothing happens without your control.
+
+## Key Features
+
+### Agent-First Dashboard
+- Central command center (like Antigravity Agent Manager)
+- High-level goal input with focus modes (Code, UI/App, Research, Automation)
+- Live task overview and history
+
+### Safe Multi-Step Execution
+- Natural language → structured plan (via bounded experiments)
+- Tool use through strict allowlist + policy layer
+- Approval gates for any medium/high risk action
+- Full audit log + memory inheritance
+
+### Self-Evolving Intelligence
+- Successful patterns are promoted to reusable **Skills**
+- Memory timeline (episodes, lessons, lineage)
+- Continuous improvement through scored experiments
+
+### Built-in Safety (non-negotiable)
+- Human agency always preserved
+- Reversibility preferred
+- No unbounded autonomy
+- All actions logged and explainable
+
+## Quick Start
+
 ```bash
-git checkout jarvis-dashboard
+git clone https://github.com/AIFutureDreamArtist/aitoddler-mvp.git
+cd aitoddler-mvp
+git checkout jarvis-dashboard   # or main for stable
 npm run dev
 ```
 
-Open http://127.0.0.1:8787
+Open **http://127.0.0.1:8787**
 
-The dashboard now includes a dedicated **Jarvis** tab where you can give high-level goals and watch the agent work (with safety rails).
+The **PilotDirector** tab is now the main interface.
 
-## Roadmap
-- [x] Base steward harness (experiments, skills, tools, memory)
-- [ ] Jarvis task planner + executor
-- [ ] Enhanced dashboard with live task view
-- [ ] Safe code/file tools
-- [ ] Integration hooks for Cursor/Lovable-style workflows
-- [ ] Voice + proactive suggestions
+## How to Use (PilotDirector Tab)
 
-This keeps everything local-first and under your control.
+1. Type a high-level goal (e.g. "Build a beautiful SaaS landing page with hero, features, pricing and contact form")
+2. Choose focus: Code / UI / Research / Automation
+3. Click "Launch Pilot"
+4. Watch PilotDirector plan + execute step-by-step
+5. Approve or modify any risky actions in the log
+
+## Architecture
+
+```
+User Goal
+   ↓
+PilotDirector Planner (Chat + Experiment scoring)
+   ↓
+Task Decomposition + Tool Selection
+   ↓
+Safety Check + Approval Gate (if needed)
+   ↓
+Execute (allowlisted tools only)
+   ↓
+Capture result → Memory + Skill promotion
+   ↓
+Feedback loop
+```
+
+## Current Status (v0.2.0 on jarvis-dashboard branch)
+
+- Full working dashboard with PilotDirector tab
+- Integrated chat + experiment engine
+- Safe tool execution layer
+- Memory, Skills, and Action logging
+- Basic multi-focus agent behavior
+
+## Roadmap (next priorities)
+- Real task queue + background agent worker
+- Safe file system tools (read/write with diff preview + approval)
+- UI/Component generator (Lovable-style)
+- Project scaffolding (full app generation)
+- Multi-agent orchestration (parallel pilots)
+- Proactive suggestions from memory
+- Optional local LLM integration (llama.cpp / Ollama)
+
+## Philosophy
+
+PilotDirector is not just another AI coding tool.
+It is a **personal director** that helps you build and research — while always keeping you in the pilot seat.
+
+Built with care for safety, agency, and long-term capability growth.
