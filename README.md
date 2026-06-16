@@ -1,23 +1,34 @@
-# PilotDirector v0.3.0 — Advanced Local AI Agent Platform
+# PilotDirector v0.4.0 — Advanced Local AI Agent
 
-**PilotDirector** is now a powerful, safe, local-first personal AI agent that combines:
+**PilotDirector** is a safe, local-first personal AI agent platform combining the best of Antigravity, Lovable, and Hermes — with strong stewardship and human control.
 
-- **Antigravity** style agent orchestration & multi-tasking
-- **Lovable** style full project scaffolding
-- **Hermes** style self-evolving memory & skills
-- Strong **stewardship** with human approval gates
+## Latest Features (v0.4.0)
 
-## What's New in v0.3.0
+- **Betere Multi-File Scaffolding**: PilotDirector kan meerdere bestanden tegelijk plannen en als proposals aanbieden
+- **Approval Queue met Diff**: Duidelijke preview voordat bestanden worden geschreven
+- **Multi-Task / Multi-Agent**: Meerdere actieve taken tegelijk
+- **File Tools**: `read_file` + `propose_file_write` met approval
+- **Optionele Lokale LLM**: Volledige ondersteuning voor llama.cpp / Ollama
 
-- **Volledige Project Scaffolding**: Genereert meerdere bestanden tegelijk via proposals
-- **Betere Diff Rendering**: Duidelijke diff preview in de Approval Queue
-- **Echte Multi-Agent / Multi-Task**: Meerdere actieve taken tegelijk, elk als aparte agent
-- File tools: `read_file` + `propose_file_write` met approval flow
-- Approval Queue met één-klik goedkeuring
-- Verbeterde UI met Actieve Taken + Diffs
+## Lokale LLM Integratie (llama.cpp / Ollama) — Aanbevolen
 
-## Quick Start
+PilotDirector werkt al met een lokale LLM voor betere antwoorden en planning.
 
+### Stap 1: Start llama.cpp server
+```bash
+llama-server -m /pad/naar/model.gguf --port 8080 -c 4096 --host 127.0.0.1
+```
+
+### Stap 2: Start PilotDirector met LLM
+```bash
+LLAMA_BASE_URL=http://127.0.0.1:8080/v1 LLAMA_MODEL=jouw-model npm run dev
+```
+
+Daarna gebruikt PilotDirector automatisch de lokale LLM voor planning en replies.
+
+Zonder LLM gebruikt hij de ingebouwde steward fallback (nog steeds krachtig).
+
+## Quick Start (zonder LLM)
 ```bash
 git clone https://github.com/AIFutureDreamArtist/aitoddler-mvp.git
 cd aitoddler-mvp
@@ -25,14 +36,14 @@ git checkout jarvis-dashboard
 npm run dev
 ```
 
-Open http://127.0.0.1:8787 en ga naar de **PilotDirector** tab.
+Open http://127.0.0.1:8787 → **PilotDirector** tab.
 
-## Voorbeeld: Volledig Project Scaffolding
+## Volledige Project Scaffolding Voorbeeld
 
-1. Typ: "Bouw een moderne portfolio website met dark mode, projecten, skills en contact form"
-2. Kies mode **UI + Scaffolding**
-3. Klik **Launch Full Project Scaffolding**
+1. Typ een ambitieus doel (bijv. "Bouw een volledige moderne SaaS app met landing + dashboard")
+2. Kies **UI + Scaffolding**
+3. Launch
 4. PilotDirector genereert meerdere file proposals
-5. Jij keurt goed via de Approval Queue → bestanden worden geschreven
+5. Keur goed in de Approval Queue
 
-Alles blijft veilig, lokaal en omkeerbaar.
+Alles blijft veilig en onder jouw controle.
