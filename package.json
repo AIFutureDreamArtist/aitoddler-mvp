@@ -1,8 +1,9 @@
 {
-  "name": "aitoddler-mvp",
-  "version": "0.1.0",
+  "name": "pilotdirector",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
+  "description": "PilotDirector - Safe local-first personal AI agent platform. Agent-first like Antigravity + Lovable, self-evolving like Hermes, with strong stewardship and human oversight.",
   "scripts": {
     "dev": "node server/index.mjs",
     "server": "node server/index.mjs",
