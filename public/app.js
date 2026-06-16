@@ -1,5 +1,6 @@
 const navItems = [
   ["dashboard", "Dashboard"],
+  ["jarvis", "Jarvis Agent"],
   ["chat", "Chat"],
   ["experiments", "Experiments"],
   ["skills", "Skills"],
@@ -7,7 +8,7 @@ const navItems = [
   ["memory", "Memory"]
 ];
 
-let active = "dashboard";
+let active = "jarvis";
 let state = null;
 
 const view = document.querySelector("#view");
@@ -39,6 +40,7 @@ function render() {
   });
   const views = {
     dashboard: dashboardView,
+    jarvis: jarvisView,
     chat: chatView,
     experiments: experimentsView,
     skills: skillsView,
@@ -105,6 +107,65 @@ function scoreChart(items) {
   `;
 }
 
+// NEW: Jarvis Agent View
+function jarvisView() {
+  return `
+    <section class="two-column">
+      <div class="control-panel">
+        <div class="section-title">
+          <h2>🤖 Jarvis — Jouw Persoonlijke Agent</h2>
+          <span class="badge neutral">Steward Mode</span>
+        </div>
+        
+        <p style="color: var(--muted); margin-bottom: 1rem;">
+          Geef Jarvis een hoog-niveau doel. Hij plant de taak, kiest veilige tools, vraagt goedkeuring waar nodig en voert uit met volledige logging.
+        </p>
+
+        <textarea id="jarvis-goal" placeholder="Bijv: Bouw een mooie landingspagina voor mijn startup met hero, features en contact form. Of: Onderzoek de laatste trends in AI agents en maak een samenvatting met bronnen."></textarea>
+        
+        <div style="margin: 1rem 0;">
+          <label style="font-size: 0.85rem; color: var(--muted);">Focus / Stijl</label>
+          <div class="segmented" id="jarvis-focus">
+            <button class="selected" data-focus="general">Algemeen</button>
+            <button data-focus="code">Code / Cursor-style</button>
+            <button data-focus="ui">UI / Lovable-style</button>
+            <button data-focus="research">Research / Hermes-style</button>
+            <button data-focus="automation">Automation</button>
+          </div>
+        </div>
+
+        <button class="primary" id="jarvis-submit" style="width: 100%;">🚀 Laat Jarvis aan de slag gaan</button>
+
+        <div style="margin-top: 1.5rem; font-size: 0.85rem; color: var(--muted);">
+          <strong>Veiligheid:</strong> Hoog-risico acties worden eerst voorgesteld en wachten op jouw goedkeuring. Alles wordt gelogd in Memory & Actions.
+        </div>
+      </div>
+
+      <div class="list-panel">
+        <div class="section-title">
+          <h2>Actieve & Recente Taken</h2>
+          <span id="task-count">${state.actions.length + state.experiments.length}</span>
+        </div>
+        
+        <div id="jarvis-tasks">
+          ${state.messages.slice(-6).reverse().map(msg => `
+            <div class="row" style="padding: 0.8rem 0; border-top: 1px solid var(--line);">
+              <div>
+                <strong>${msg.role === 'user' ? 'Jij' : 'Jarvis'}</strong><br>
+                <span style="font-size: 0.9rem; color: var(--muted);">${escapeHtml(msg.content.substring(0, 140))}${msg.content.length > 140 ? '...' : ''}</span>
+              </div>
+            </div>
+          `).join('') || '<p style="color: var(--muted);">Nog geen taken. Geef Jarvis een doel hierboven.</p>'}
+        </div>
+
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--line); font-size: 0.8rem; color: var(--muted);">
+          Jarvis gebruikt het Aitoddler steward systeem: hij runt bounded experiments, promoot skills alleen als safety + agency verbeteren, en vraagt approval bij riskante acties.
+        </div>
+      </div>
+    </section>
+  `;
+}
+
 function chatView() {
   return `
     <section class="conversation">
@@ -121,7 +182,7 @@ function chatView() {
           .join("")}
       </div>
       <form class="composer" id="chat-form">
-        <input id="chat-input" placeholder="Ask about skills, tools, memory, or the next experiment..." />
+        <input id="chat-input" placeholder="Vraag Jarvis iets of geef een taak..." />
         <button>Send</button>
       </form>
     </section>
@@ -241,6 +302,50 @@ function memoryView() {
 }
 
 function bindViewEvents() {
+  // Jarvis submit handler
+  const jarvisBtn = document.querySelector("#jarvis-submit");
+  if (jarvisBtn) {
+    jarvisBtn.addEventListener("click", async () => {
+      const goal = document.querySelector("#jarvis-goal").value.trim();
+      if (!goal) return alert("Geef Jarvis een doel.");
+      
+      const focusBtn = document.querySelector("#jarvis-focus .selected");
+      const focus = focusBtn ? focusBtn.dataset.focus : "general";
+      
+      jarvisBtn.textContent = "Jarvis denkt na...";
+      jarvisBtn.disabled = true;
+
+      // For now: send as chat + run an experiment as planning step
+      await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: `Jarvis, voer deze taak uit: ${goal}. Focus: ${focus}. Plan het stap voor stap met safety checks.` })
+      });
+
+      // Also run a planning experiment
+      await fetch("/api/experiments/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          hypothesis: `Plan and safely execute user goal: ${goal} (focus: ${focus})`, 
+          focus: "stewardship" 
+        })
+      });
+
+      await refresh();
+      jarvisBtn.textContent = "🚀 Laat Jarvis aan de slag gaan";
+      jarvisBtn.disabled = false;
+    });
+  }
+
+  // Segmented buttons for Jarvis focus
+  document.querySelectorAll("#jarvis-focus [data-focus]").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll("#jarvis-focus [data-focus]").forEach((item) => item.classList.remove("selected"));
+      button.classList.add("selected");
+    });
+  });
+
   const chatForm = document.querySelector("#chat-form");
   if (chatForm) {
     chatForm.addEventListener("submit", async (event) => {
