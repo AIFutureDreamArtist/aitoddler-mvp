@@ -3,100 +3,82 @@
 **PilotDirector** is your safe, local-first personal AI agent platform.
 
 It combines the best of:
-- **Google Antigravity** — agent-first orchestration, parallel tasks, browser-like execution
-- **Lovable** — vibe coding and full app/component generation
-- **Hermes / OpenClaw** — self-evolving personal agent with persistent memory and skills
+- **Google Antigravity** — agent-first orchestration and parallel task thinking
+- **Lovable** — vibe coding and app/component generation
+- **Hermes / OpenClaw** — self-evolving personal agent with persistent memory & skills
 
-...but with **strong stewardship, human oversight, and reversibility** at its core (inspired by Aitoddler principles).
+...but with **strong stewardship, human oversight, and reversibility** built in from day one.
 
 ## Core Promise
 
-You give high-level goals → PilotDirector plans, decomposes, executes safely, and learns.
-Everything runs locally. Risky actions are proposed first and require your explicit approval. Nothing happens without your control.
+You give high-level goals → PilotDirector plans, breaks it down, executes safely through tools, and learns. 
+Everything stays local. Risky actions are always proposed first for your approval.
 
-## Key Features
+## Current Status (v0.2.0 - jarvis-dashboard branch)
 
-### Agent-First Dashboard
-- Central command center (like Antigravity Agent Manager)
-- High-level goal input with focus modes (Code, UI/App, Research, Automation)
-- Live task overview and history
+**PilotDirector is ready to use.**
 
-### Safe Multi-Step Execution
-- Natural language → structured plan (via bounded experiments)
-- Tool use through strict allowlist + policy layer
-- Approval gates for any medium/high risk action
-- Full audit log + memory inheritance
-
-### Self-Evolving Intelligence
-- Successful patterns are promoted to reusable **Skills**
-- Memory timeline (episodes, lessons, lineage)
-- Continuous improvement through scored experiments
-
-### Built-in Safety (non-negotiable)
-- Human agency always preserved
-- Reversibility preferred
-- No unbounded autonomy
-- All actions logged and explainable
+### What works now:
+- Beautiful **PilotDirector tab** as main command center
+- High-level goal input with 4 focus modes (UI/App, Code, Research, Automation)
+- Automatic planning via the steward experiment system
+- New safe AI tools: `generate_component` and `create_project_plan`
+- Full Memory, Skills promotion, Action logging
+- Approval gates for any high-risk actions
+- Persistent tasks tracking (tasks.json)
+- Works completely locally (optional local LLM support)
 
 ## Quick Start
 
 ```bash
 git clone https://github.com/AIFutureDreamArtist/aitoddler-mvp.git
 cd aitoddler-mvp
-git checkout jarvis-dashboard   # or main for stable
+git checkout jarvis-dashboard
 npm run dev
 ```
 
-Open **http://127.0.0.1:8787**
+Open **http://127.0.0.1:8787** — the **PilotDirector** tab is the main interface.
 
-The **PilotDirector** tab is now the main interface.
+## How to use
 
-## How to Use (PilotDirector Tab)
+1. Ga naar de **PilotDirector** tab
+2. Typ een hoog-niveau doel (bijv. "Bouw een moderne portfolio website met dark mode en contact form")
+3. Kies de juiste mode (UI, Code, Research of Automation)
+4. Klik **Launch Pilot**
+5. PilotDirector plant het, gebruikt tools, en houdt je op de hoogte via chat + logs
+6. Bij riskante acties krijg je een duidelijke approval prompt
 
-1. Type a high-level goal (e.g. "Build a beautiful SaaS landing page with hero, features, pricing and contact form")
-2. Choose focus: Code / UI / Research / Automation
-3. Click "Launch Pilot"
-4. Watch PilotDirector plan + execute step-by-step
-5. Approve or modify any risky actions in the log
-
-## Architecture
+## Architecture & Safety
 
 ```
 User Goal
    ↓
-PilotDirector Planner (Chat + Experiment scoring)
+PilotDirector Planner (Chat + Scored Experiments)
    ↓
-Task Decomposition + Tool Selection
+Task Decomposition
    ↓
-Safety Check + Approval Gate (if needed)
+Tool Selection (allowlist only)
    ↓
-Execute (allowlisted tools only)
+Safety Check + Human Approval Gate (if needed)
    ↓
-Capture result → Memory + Skill promotion
+Execute → Capture result
    ↓
-Feedback loop
+Memory update + Skill promotion (if valuable & safe)
+   ↓
+Continuous improvement
 ```
 
-## Current Status (v0.2.0 on jarvis-dashboard branch)
+PilotDirector never has raw access to your system. Everything goes through the proven steward layer.
 
-- Full working dashboard with PilotDirector tab
-- Integrated chat + experiment engine
-- Safe tool execution layer
-- Memory, Skills, and Action logging
-- Basic multi-focus agent behavior
-
-## Roadmap (next priorities)
-- Real task queue + background agent worker
-- Safe file system tools (read/write with diff preview + approval)
-- UI/Component generator (Lovable-style)
-- Project scaffolding (full app generation)
-- Multi-agent orchestration (parallel pilots)
+## Next logical improvements (easy to add)
+- Real background task queue + multi-agent
+- Safe file read/write with diff preview
+- Full project scaffolding
 - Proactive suggestions from memory
-- Optional local LLM integration (llama.cpp / Ollama)
 
 ## Philosophy
 
-PilotDirector is not just another AI coding tool.
-It is a **personal director** that helps you build and research — while always keeping you in the pilot seat.
+PilotDirector is not just another AI tool.
+It is **your personal director** that helps you build, research and automate — while you stay firmly in the pilot seat.
 
-Built with care for safety, agency, and long-term capability growth.
+Local. Safe. Self-improving. Under your control.
