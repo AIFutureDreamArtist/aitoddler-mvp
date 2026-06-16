@@ -107,86 +107,99 @@ function scoreChart(items) {
   `;
 }
 
-// === PILOTDIRECTOR VIEW (Main Agent Interface) ===
+// === FULL PILOTDIRECTOR VIEW ===
 function pilotDirectorView() {
-  const recentTasks = state.messages.slice(-8).reverse();
-  
+  const tasks = state.tasks || [];
+  const activeTasks = tasks.filter(t => t.status !== 'completed' && t.status !== 'cancelled');
+  const recentMessages = state.messages.slice(-6).reverse();
+
   return `
     <div>
-      <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+      <!-- Header -->
+      <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
         <div>
-          <h1 style="margin: 0; font-size: 2.2rem;">PilotDirector</h1>
-          <p style="margin: 0.3rem 0 0; color: var(--muted); font-size: 1.05rem;">
-            Jouw veilige persoonlijke AI agent • Antigravity × Lovable × Hermes stijl
+          <h1 style="margin:0; font-size:2.4rem; line-height:1;">PilotDirector</h1>
+          <p style="margin:0.4rem 0 0; color:var(--muted); font-size:1.1rem;">
+            Jouw veilige persoonlijke AI agent • Antigravity × Lovable × Hermes
           </p>
         </div>
-        <div style="margin-left: auto; text-align: right;">
-          <div class="status-pill">
-            <span class="status-dot"></span>
-            <strong>Steward Active</strong>
+        <div style="margin-left:auto; text-align:right;">
+          <div class="status-pill" style="background:#e6f4ed; border-color:#0b7a53;">
+            <span class="status-dot" style="background:#0b7a53;"></span>
+            <strong style="color:#0b7a53;">Steward Active</strong>
           </div>
-          <div style="font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem;">
-            ${state.summary.maturity} • ${state.summary.skills} skills
+          <div style="font-size:0.85rem; color:var(--muted); margin-top:4px;">
+            ${state.summary.maturity} • ${state.summary.skills} skills • ${activeTasks.length} actieve taken
           </div>
         </div>
       </div>
 
-      <!-- Goal Input -->
-      <div class="control-panel" style="margin-bottom: 1.5rem;">
-        <h2 style="margin-top: 0;">Geef een hoog-niveau doel</h2>
-        <textarea id="pilot-goal" placeholder="Voorbeeld: Bouw een moderne SaaS landingspagina met hero sectie, features, pricing tiers en contact form. Of: Onderzoek de laatste ontwikkelingen in multi-agent systemen en maak een gestructureerd rapport met aanbevelingen." style="min-height: 110px; font-size: 1rem;"></textarea>
+      <!-- Goal Launcher -->
+      <div class="control-panel" style="margin-bottom:1.8rem; border:2px solid var(--accent-soft);">
+        <h2 style="margin-top:0; color:var(--accent);">🚀 Nieuw doel lanceren</h2>
+        <textarea id="pilot-goal" placeholder="Bijv: Bouw een volledige moderne portfolio website met dark mode, projecten sectie, skills en contact formulier. Of: Onderzoek multi-agent systemen en maak een gedetailleerd rapport met aanbevelingen en bronnen." style="min-height:100px; font-size:1.05rem;"></textarea>
 
-        <div style="margin: 1rem 0 0.5rem;">
-          <label style="font-size: 0.9rem; color: var(--muted); font-weight: 600;">Focus / Agent Mode</label>
-          <div class="segmented" id="pilot-focus" style="margin-top: 0.5rem;">
-            <button class="selected" data-focus="ui">UI / App Builder (Lovable)</button>
-            <button data-focus="code">Code & Refactor (Cursor/Antigravity)</button>
-            <button data-focus="research">Research & Analysis (Hermes)</button>
-            <button data-focus="automation">Automation & Tasks</button>
+        <div style="margin:1rem 0 0.6rem;">
+          <label style="font-size:0.9rem; font-weight:600; color:var(--muted);">Agent Mode</label>
+          <div class="segmented" id="pilot-focus" style="margin-top:0.5rem; flex-wrap:wrap;">
+            <button class="selected" data-focus="ui">UI / App Builder</button>
+            <button data-focus="code">Code & Refactor</button>
+            <button data-focus="research">Research & Analysis</button>
+            <button data-focus="automation">Automation</button>
           </div>
         </div>
 
-        <button class="primary" id="pilot-launch" style="width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 0.8rem;">
-          🚀 Launch Pilot — Laat PilotDirector aan de slag gaan
+        <button id="pilot-launch" class="primary" style="width:100%; padding:1.1rem; font-size:1.15rem; font-weight:800;">
+          Launch PilotDirector
         </button>
-
-        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--muted); display: flex; gap: 1.5rem; flex-wrap: wrap;">
-          <div>✓ Veilige planning via experiments</div>
-          <div>✓ Approval gates bij riskante acties</div>
-          <div>✓ Volledige logging & memory</div>
-          <div>✓ Skills worden automatisch gepromoot</div>
-        </div>
       </div>
 
-      <!-- Live Task Overview -->
-      <div class="wide-panel">
+      <!-- Active Tasks -->
+      <div class="wide-panel" style="margin-bottom:1.5rem;">
         <div class="section-title">
-          <h2>Actieve & Recente Pilot Taken</h2>
-          <span>${recentTasks.length} recente interacties</span>
+          <h2>Actieve Taken</h2>
+          <span>${activeTasks.length} lopend</span>
         </div>
         
-        <div style="display: grid; gap: 0.75rem;">
-          ${recentTasks.length > 0 
-            ? recentTasks.map(msg => `
-              <div class="row" style="padding: 1rem; background: ${msg.role === 'user' ? 'rgba(22,24,21,0.03)' : 'white'};">
-                <div style="flex: 1;">
-                  <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.35rem;">
-                    <span style="font-weight: 700; color: ${msg.role === 'user' ? '#161815' : 'var(--accent)'};">
-                      ${msg.role === 'user' ? 'Jij' : 'PilotDirector'}
-                    </span>
-                    <span style="font-size: 0.75rem; color: var(--muted);">${new Date(msg.createdAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
-                  </div>
-                  <p style="margin: 0; line-height: 1.5; color: #30362f;">${escapeHtml(msg.content)}</p>
+        ${activeTasks.length > 0 
+          ? activeTasks.map(task => `
+            <div class="row" style="padding:1rem; background:white; border-left:5px solid var(--accent);">
+              <div style="flex:1;">
+                <strong>${escapeHtml(task.goal)}</strong>
+                <div style="margin-top:0.4rem; font-size:0.85rem; color:var(--muted);">
+                  Mode: ${task.focus} • Status: <strong style="color:#0b7a53;">${task.status}</strong>
                 </div>
               </div>
-            `).join('')
-            : `<div class="empty" style="min-height: 120px;">Nog geen taken. Start hierboven met een doel.</div>`
-          }
+              <div style="text-align:right; font-size:0.8rem; color:var(--muted);">
+                ${new Date(task.createdAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
+              </div>
+            </div>
+          `).join('')
+          : `<div class="empty" style="min-height:80px; background:#f8faf7;">Geen actieve taken. Lanceer hierboven een nieuw doel.</div>`
+        }
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="wide-panel">
+        <div class="section-title">
+          <h2>Recente Activiteit & Logs</h2>
+          <span>${recentMessages.length} berichten</span>
+        </div>
+        
+        <div style="display:grid; gap:0.6rem;">
+          ${recentMessages.map(msg => `
+            <div style="padding:0.9rem 1rem; background:${msg.role === 'user' ? '#161815' : 'white'}; color:${msg.role === 'user' ? 'white' : '#161815'}; border-radius:0.6rem; font-size:0.95rem;">
+              <div style="font-weight:700; margin-bottom:0.25rem; opacity:0.85; font-size:0.8rem;">
+                ${msg.role === 'user' ? 'JIJ' : 'PILOTDIRECTOR'}
+              </div>
+              <div>${escapeHtml(msg.content.length > 220 ? msg.content.substring(0, 220) + '...' : msg.content)}</div>
+            </div>
+          `).join('')}
         </div>
       </div>
 
-      <div style="margin-top: 1.5rem; font-size: 0.85rem; color: var(--muted); text-align: center;">
-        PilotDirector werkt altijd via het steward-systeem: hij plant veilig, vraagt goedkeuring waar nodig en leert van elke uitvoering.
+      <div style="margin-top:1.8rem; text-align:center; font-size:0.85rem; color:var(--muted);">
+        Alles verloopt via het veilige steward-systeem • Jij behoudt altijd de controle
       </div>
     </div>
   `;
@@ -208,7 +221,7 @@ function chatView() {
           .join("")}
       </div>
       <form class="composer" id="chat-form">
-        <input id="chat-input" placeholder="Vraag PilotDirector iets of geef een taak..." />
+        <input id="chat-input" placeholder="Vraag PilotDirector iets..." />
         <button>Send</button>
       </form>
     </section>
@@ -328,108 +341,94 @@ function memoryView() {
 }
 
 function bindViewEvents() {
-  // PilotDirector Launch
   const pilotBtn = document.querySelector("#pilot-launch");
   if (pilotBtn) {
     pilotBtn.addEventListener("click", async () => {
       const goal = document.querySelector("#pilot-goal").value.trim();
-      if (!goal) {
-        alert("Geef PilotDirector een duidelijk doel.");
-        return;
-      }
-      
+      if (!goal) return alert("Geef een duidelijk doel.");
+
       const focusBtn = document.querySelector("#pilot-focus .selected");
       const focus = focusBtn ? focusBtn.dataset.focus : "ui";
-      
+
       pilotBtn.textContent = "PilotDirector plant en werkt...";
       pilotBtn.disabled = true;
 
-      // Send goal to chat
+      // Create task
+      try {
+        await fetch("/api/tasks/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ goal, focus })
+        });
+      } catch(e) {}
+
+      // Send to chat
       await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          message: `PilotDirector, voer dit doel uit: ${goal}. Gebruik focus: ${focus}. Plan stap-voor-stap, gebruik veilige tools en vraag goedkeuring waar nodig.` 
+          message: `PilotDirector, voer dit doel uit: ${goal}. Focus/mode: ${focus}. Plan het stap voor stap, gebruik veilige tools en vraag expliciete goedkeuring bij riskante acties.` 
         })
       });
 
-      // Trigger a planning experiment
+      // Planning experiment
       await fetch("/api/experiments/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          hypothesis: `High-level goal execution: ${goal} (mode: ${focus}) — safe, reversible, high value for user`, 
+          hypothesis: `Execute high-level user goal safely: ${goal} (mode: ${focus})`, 
           focus: "stewardship" 
         })
       });
 
       await refresh();
-      pilotBtn.textContent = "🚀 Launch Pilot — Laat PilotDirector aan de slag gaan";
+      pilotBtn.textContent = "Launch PilotDirector";
       pilotBtn.disabled = false;
-
-      // Optional: scroll to recent tasks
-      setTimeout(() => {
-        const tasksSection = document.querySelector('.wide-panel');
-        if (tasksSection) tasksSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 300);
     });
   }
 
-  // Segmented focus buttons
-  document.querySelectorAll("#pilot-focus [data-focus]").forEach((button) => {
-    button.addEventListener("click", () => {
-      document.querySelectorAll("#pilot-focus [data-focus]").forEach((item) => item.classList.remove("selected"));
-      button.classList.add("selected");
+  document.querySelectorAll("#pilot-focus [data-focus]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#pilot-focus [data-focus]").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
     });
   });
 
   const chatForm = document.querySelector("#chat-form");
   if (chatForm) {
-    chatForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
+    chatForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
       const input = document.querySelector("#chat-input");
-      const message = input.value.trim();
-      if (!message) return;
+      const msg = input.value.trim();
+      if (!msg) return;
       input.value = "";
-      await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message })
-      });
+      await fetch("/api/chat", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({message: msg}) });
       await refresh();
     });
   }
 
-  document.querySelectorAll("[data-focus]").forEach((button) => {
+  document.querySelectorAll("[data-focus]").forEach(button => {
     button.addEventListener("click", () => {
-      document.querySelectorAll("[data-focus]").forEach((item) => item.classList.remove("selected"));
+      document.querySelectorAll("[data-focus]").forEach(b => b.classList.remove("selected"));
       button.classList.add("selected");
     });
   });
 
-  const runButton = document.querySelector("#run-experiment");
-  if (runButton) {
-    runButton.addEventListener("click", async () => {
-      const hypothesis = document.querySelector("#hypothesis").value;
-      const focus = document.querySelector("[data-focus].selected")?.dataset.focus || "stewardship";
-      runButton.textContent = "Running...";
-      await fetch("/api/experiments/run", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hypothesis, focus })
-      });
+  const runBtn = document.querySelector("#run-experiment");
+  if (runBtn) {
+    runBtn.addEventListener("click", async () => {
+      const hyp = document.querySelector("#hypothesis").value;
+      const f = document.querySelector("[data-focus].selected")?.dataset.focus || "stewardship";
+      runBtn.textContent = "Running...";
+      await fetch("/api/experiments/run", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({hypothesis: hyp, focus: f}) });
       await refresh();
     });
   }
 
-  document.querySelectorAll("[data-tool]").forEach((button) => {
-    button.addEventListener("click", async () => {
-      button.textContent = "Running...";
-      await fetch("/api/actions/execute", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ toolId: button.dataset.tool })
-      });
+  document.querySelectorAll("[data-tool]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      btn.textContent = "Running...";
+      await fetch("/api/actions/execute", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({toolId: btn.dataset.tool}) });
       await refresh();
     });
   });
