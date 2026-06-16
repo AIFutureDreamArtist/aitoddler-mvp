@@ -57,12 +57,19 @@ function pilotDirectorView() {
   const pending = proposals.filter(p => p.status === 'pending');
   const recent = state.messages.slice(-5).reverse();
 
+  const templates = [
+    { label: "Portfolio", prompt: "Bouw een moderne portfolio website met dark mode, hero, projecten, skills en contact form" },
+    { label: "SaaS Landing", prompt: "Bouw een professionele SaaS landingspagina met hero, features, pricing en CTA" },
+    { label: "Todo App", prompt: "Bouw een werkende todo app met lokale opslag, add/delete en dark mode" },
+    { label: "Dashboard", prompt: "Bouw een simpel admin dashboard met sidebar, stats en tabel" }
+  ];
+
   return `
     <div>
       <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem">
         <div>
           <h1 style="margin:0;font-size:2.5rem">PilotDirector</h1>
-          <p style="margin:0.3rem 0 0;color:var(--muted)">Geavanceerde scaffolding • Visuele diffs • Voice</p>
+          <p style="margin:0.3rem 0 0;color:var(--muted)">Geavanceerde scaffolding • Templates • Visuele diffs • Voice • Rollback</p>
         </div>
         <div style="margin-left:auto">
           <div class="status-pill" style="background:#e6f4ed;border-color:#0b7a53">
@@ -72,25 +79,33 @@ function pilotDirectorView() {
         </div>
       </div>
 
+      <!-- Templates -->
+      <div style="margin-bottom:1rem">
+        <div style="font-size:0.85rem;color:var(--muted);margin-bottom:0.4rem;font-weight:600">Snelle Templates</div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+          ${templates.map(t => `<button data-template="${t.prompt}" style="background:#f4f7f1;border:1px solid #d9e2d6;padding:0.45rem 0.9rem;border-radius:999px;font-size:0.85rem;cursor:pointer">${t.label}</button>`).join('')}
+        </div>
+      </div>
+
       <!-- Advanced Scaffolding -->
       <div class="control-panel" style="margin-bottom:1.5rem;border:2px solid #0b7a53">
         <h2 style="margin-top:0;color:#0b7a53">🚀 Geavanceerde Project Scaffolding</h2>
         <div style="position:relative">
-          <textarea id="pilot-goal" placeholder="Bouw een volledige moderne SaaS app met package.json, meerdere componenten en werkende structuur" style="min-height:100px;padding-right:55px"></textarea>
+          <textarea id="pilot-goal" placeholder="Bouw een minimale werkende demo app met package.json en meerdere componenten" style="min-height:100px;padding-right:55px"></textarea>
           <button id="voice-btn" style="position:absolute;top:12px;right:12px;background:#f4f7f1;border:1px solid #d9e2d6;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:1.1rem">🎤</button>
         </div>
 
         <div class="segmented" id="pilot-focus" style="margin:0.8rem 0">
-          <button class="selected" data-focus="ui">UI + Advanced Scaffolding</button>
+          <button class="selected" data-focus="ui">UI + Slimme Scaffolding</button>
           <button data-focus="code">Full Code Project</button>
           <button data-focus="research">Research Project</button>
         </div>
 
         <button id="pilot-launch" class="primary" style="width:100%;padding:1rem;font-size:1.1rem;background:#0b7a53">
-          Launch Geavanceerde Scaffolding
+          Launch Slimme Werkende Demo Scaffolding
         </button>
         <div style="margin-top:0.5rem;font-size:0.8rem;color:var(--muted);text-align:center">
-          Genereert automatisch package.json + meerdere componenten + werkende structuur
+          Genereert automatisch een minimale werkende demo (package.json + componenten)
         </div>
       </div>
 
@@ -101,7 +116,7 @@ function pilotDirectorView() {
         </div>
 
         <div class="wide-panel">
-          <div class="section-title"><h2>Approval Queue (Visuele Diff)</h2><span>${pending.length}</span></div>
+          <div class="section-title"><h2>Approval Queue (Visuele Diff + Rollback)</h2><span>${pending.length}</span></div>
           ${pending.length ? pending.map(p => {
             const diffHtml = (p.diff || '').split('\n').map(line => {
               if (line.startsWith('+')) return `<div style="color:#0b7a53;background:#e6f4ed">${escapeHtml(line)}</div>`;
@@ -113,7 +128,7 @@ function pilotDirectorView() {
                 <div style="font-weight:700;margin-bottom:0.4rem">${escapeHtml(p.path)}</div>
                 <div style="background:#f8faf7;padding:0.6rem;border-radius:6px;font-family:monospace;font-size:0.75rem;max-height:140px;overflow:auto;line-height:1.4">${diffHtml}</div>
                 <div style="display:flex;gap:0.5rem;margin-top:0.6rem">
-                  <button data-approve="${p.id}" style="flex:1;background:#0b7a53;color:white;border:0;padding:0.5rem;border-radius:6px">Approve & Write</button>
+                  <button data-approve="${p.id}" style="flex:1;background:#0b7a53;color:white;border:0;padding:0.5rem;border-radius:6px">Approve</button>
                   <button data-rollback="${p.id}" style="background:#b94040;color:white;border:0;padding:0.5rem 1rem;border-radius:6px">Rollback</button>
                 </div>
               </div>`;
@@ -130,6 +145,15 @@ function pilotDirectorView() {
 }
 
 function bindViewEvents() {
+  // Templates
+  document.querySelectorAll("[data-template]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const input = document.querySelector("#pilot-goal");
+      if (input) input.value = btn.dataset.template;
+    });
+  });
+
+  // Voice
   const voiceBtn = document.querySelector("#voice-btn");
   if (voiceBtn) {
     if (!recognition) recognition = setupVoiceInput();
@@ -147,17 +171,17 @@ function bindViewEvents() {
       if (!goal) return alert("Geef een doel");
       const focus = document.querySelector("#pilot-focus .selected")?.dataset.focus || "ui";
 
-      pilotBtn.textContent = "Genereert werkende app structuur...";
+      pilotBtn.textContent = "Genereert minimale werkende demo...";
       pilotBtn.disabled = true;
 
       await fetch("/api/tasks/create", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({goal, focus}) });
 
       await fetch("/api/chat", {
         method:"POST", headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ message: `PilotDirector, voer GEAVANCEERDE multi-file scaffolding uit voor: ${goal}. Genereer een volledige werkende app structuur met package.json, meerdere componenten, en logische bestandsstructuur. Maak proposals voor alle bestanden met diff. Vraag approval.` })
+        body: JSON.stringify({ message: `PilotDirector, voer GEAVANCEERDE multi-file scaffolding uit voor: ${goal}. Genereer een MINIMALE WERKENDE DEMO met package.json, meerdere componenten en een functionele structuur die direct kan draaien. Maak proposals voor alle bestanden.` })
       });
 
-      await fetch("/api/experiments/run", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ hypothesis: `Advanced working app scaffolding with package.json and components: ${goal}`, focus:"stewardship" }) });
+      await fetch("/api/experiments/run", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ hypothesis: `Minimal working demo scaffolding: ${goal}`, focus:"stewardship" }) });
 
       await refresh();
       pilotBtn.textContent = "Launch Geavanceerde Scaffolding";
