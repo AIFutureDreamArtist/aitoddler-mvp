@@ -1,0 +1,12 @@
+{
+  "name": "aitoddler-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server/index.mjs",
+    "server": "node server/index.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "check": "npm run smoke"
+  }
+}
