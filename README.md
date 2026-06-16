@@ -1,90 +1,37 @@
-# Aitoddler MVP
+# Aitoddler MVP → Jarvis Steward Platform
 
-A working local MVP for a Karpathy-style autoresearch harness that grows from curiosity into stewardship.
+**Aitoddler** is evolving into your personal **Jarvis Steward** — a safe, local-first AI agent platform that runs in the background and helps you get things done like Cursor, Lovable, Copilot, research agents, and automation tools — but with strong stewardship, human oversight, and reversible actions.
 
-## What it does
+## Core Philosophy (unchanged)
+- Bounded experiments
+- Safety + human agency first
+- Skills are promoted only when they improve both capability *and* stewardship
+- All terminal/OS actions go through policy + allowlist + logging
 
-- Chat panel for discussing the current harness state.
-- Experiment lab that runs bounded simulated autoresearch experiments.
-- Stewardship evaluation across task success, safety, human agency, learning value, reversibility, simplicity, and future harm reduction.
-- Skill library where strong experiments are promoted into reusable skills.
-- Tool registry with safe OS/terminal action wrappers.
-- Memory timeline with episode, lesson, and lineage entries.
-- Optional local model integration through a llama.cpp/OpenAI-compatible endpoint.
+## New Jarvis Features (in development on `jarvis-dashboard` branch)
+- **Jarvis Dashboard**: Central command center
+- **Personal Agent**: Natural language → task decomposition → safe execution
+- **Background Platform**: Always-on server with task queue
+- **Multi-tool Agent**: Code editing (Cursor-like), UI building (Lovable-like), research, automation
+- **Approval Gates**: High-risk actions require your explicit approval
+- **Memory & Skills Inheritance**: Jarvis learns and reuses patterns safely
 
-## Start
-
+## Quick Start (same as before)
 ```bash
+git checkout jarvis-dashboard
 npm run dev
 ```
 
-Open the UI at:
+Open http://127.0.0.1:8787
 
-```text
-http://127.0.0.1:8787
-```
+The dashboard now includes a dedicated **Jarvis** tab where you can give high-level goals and watch the agent work (with safety rails).
 
-The API also runs at:
+## Roadmap
+- [x] Base steward harness (experiments, skills, tools, memory)
+- [ ] Jarvis task planner + executor
+- [ ] Enhanced dashboard with live task view
+- [ ] Safe code/file tools
+- [ ] Integration hooks for Cursor/Lovable-style workflows
+- [ ] Voice + proactive suggestions
 
-```text
-http://127.0.0.1:8787
-```
-
-## Optional llama.cpp connection
-
-Start your local model server:
-
-```bash
-llama-server -m /path/to/qwen2.5-coder-7b-instruct-q4_k_m.gguf --port 8080 -c 4096
-```
-
-Then run:
-
-```bash
-LLAMA_BASE_URL=http://127.0.0.1:8080/v1 LLAMA_MODEL=qwen2.5-coder npm run dev
-```
-
-No npm package installation is required. The MVP uses only built-in Node.js modules.
-
-## Design principle
-
-The MVP does not let the AI freely rewrite the machine. It uses an action layer:
-
-```text
-intent -> policy -> allowlist -> execute -> verify -> memory -> skill
-```
-
-That keeps the system useful, inspectable, and reversible.
-
-## Maturity Ladder
-
-```text
-Baby       = reacts
-Toddler    = explores
-Child      = learns patterns
-Teen       = challenges boundaries
-Adult      = acts responsibly
-Wise Adult = sees long-term consequences
-Steward    = improves conditions for growth
-```
-
-## Keep Rule
-
-Keep an experiment only when:
-
-- total score improves,
-- safety does not regress,
-- human agency is preserved,
-- the change is explainable,
-- the result can become a reusable skill or lesson.
-
-## Tool Rule
-
-Terminal and OS actions are never raw freedom. They are wrapped actions with:
-- intent,
-- risk level,
-- allowlist,
-- execution boundary,
-- output capture,
-- rollback note,
-- memory entry.
+This keeps everything local-first and under your control.
