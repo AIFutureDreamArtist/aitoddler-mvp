@@ -1,10 +1,14 @@
 const navItems = [
-  ["pilot", "PilotDirector"],
+  ["pilotdirector", "PilotDirector"],
   ["dashboard", "Overview"],
-  ["chat", "Chat"]
+  ["chat", "Chat"],
+  ["experiments", "Experiments"],
+  ["skills", "Skills"],
+  ["tools", "Tools"],
+  ["memory", "Memory"]
 ];
 
-let active = "pilot";
+let active = "pilotdirector";
 let state = null;
 let recognition = null;
 
@@ -13,7 +17,7 @@ async function refresh() {
     state = await fetch("/api/state").then(res => res.json());
   } catch (e) {
     console.error("Failed to refresh state:", e);
-    state = { summary: { maturity: "Error" }, tasks: [], proposals: [], actions: [], messages: [] };
+    state = { summary: { maturity: "Toddler" }, tasks: [], proposals: [], actions: [], messages: [] };
   }
   render();
 }
@@ -56,14 +60,15 @@ function render() {
     return;
   }
 
-  document.querySelector("#stage").textContent = state.summary?.maturity || "Starting";
-  document.querySelector("#model").textContent = state.summary?.llamaEnabled ? (state.summary.model || "local") : "local fallback";
+  const stageEl = document.querySelector("#stage");
+  const modelEl = document.querySelector("#model");
+  if (stageEl) stageEl.textContent = state.summary?.maturity || "Toddler";
+  if (modelEl) modelEl.textContent = state.summary?.llamaEnabled ? (state.summary.model || "local") : "local fallback";
 
   nav.querySelectorAll("button").forEach(b => b.classList.toggle("active", b.dataset.id === active));
 
   let html = "";
-
-  if (active === "pilot") {
+  if (active === "pilotdirector") {
     html = pilotDirectorView();
   } else if (active === "dashboard") {
     html = typeof dashboardView === "function" ? dashboardView() : `<div class="empty">Dashboard view tijdelijk beperkt.</div>`;
@@ -87,20 +92,22 @@ function pilotDirectorView() {
     <div>
       <h1 style="margin-bottom:1rem">PilotDirector</h1>
       <div class="control-panel">
-        <textarea id="pilot-goal" placeholder="Bouw een minimale maar functionele demo..." style="min-height:90px"></textarea>
-        <button id="pilot-launch" class="primary" style="width:100%; margin-top:0.8rem">Launch</button>
+        <textarea id="pilot-goal" placeholder="Bouw een minimale maar functionele demo met voorbeeld data..." style="min-height:90px"></textarea>
+        <button id="pilot-launch" class="primary" style="width:100%; margin-top:0.8rem">Launch Slimme Demo</button>
       </div>
 
       <div class="wide-panel" style="margin-top:1.5rem">
-        <div class="section-title"><h2>Approval Queue</h2></div>
+        <div class="section-title"><h2>Approval Queue (met Visuele Diff + Rollback)</h2></div>
         ${pending.length ? pending.map(p => `
-          <div style="padding:1rem; border:1px solid #ddd; border-radius:8px; margin-bottom:0.8rem">
-            <strong>${escapeHtml(p.path)}</strong>
-            <pre style="background:#f4f7f1; padding:0.6rem; font-size:0.8rem">${escapeHtml(p.diff || '')}</pre>
-            <button data-approve="${p.id}">Approve</button>
-            <button data-rollback="${p.id}" style="background:#b94040; color:white; margin-left:0.5rem">Rollback</button>
+          <div style="padding:1rem;background:white;border:1px solid #d9e2d6;border-radius:8px;margin-bottom:0.8rem">
+            <div style="font-weight:700;margin-bottom:0.4rem">${escapeHtml(p.path)}</div>
+            <pre style="background:#f8faf7;padding:0.6rem;border-radius:6px;font-family:monospace;font-size:0.75rem;max-height:120px;overflow:auto">${escapeHtml(p.diff || '')}</pre>
+            <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
+              <button data-approve="${p.id}" style="flex:1;background:#0b7a53;color:white;border:0;padding:0.5rem;border-radius:6px">Approve & Write</button>
+              <button data-rollback="${p.id}" style="background:#b94040;color:white;border:0;padding:0.5rem 1rem;border-radius:6px">Rollback</button>
+            </div>
           </div>
-        `).join('') : '<p>Geen openstaande wijzigingen.</p>'}
+        `).join('') : '<p style="color:#666">Geen openstaande file wijzigingen.</p>'}
       </div>
     </div>
   `;
@@ -127,7 +134,7 @@ function bindViewEvents() {
         body: JSON.stringify({ message: `PilotDirector, voer dit uit: ${goal}` })
       });
       await refresh();
-      pilotBtn.textContent = "Launch";
+      pilotBtn.textContent = "Launch Slimme Demo";
     });
   }
 
@@ -147,7 +154,7 @@ function bindViewEvents() {
       await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: "Maak een rollback voor de vorige write." })
+        body: JSON.stringify({ message: "Maak een rollback proposal voor de vorige write." })
       });
       await refresh();
     });
